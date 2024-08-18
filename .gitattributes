@@ -1,0 +1,10 @@
+* text=auto
+pubspec.lock text eol=lf
+linux/flutter/generated_* text eol=lf
+macos/Flutter/Generated* text eol=lf
+windows/flutter/generated_* text eol=lf
+android/app/src/main/res/drawable*/launch_background.xml text eol=lf
+android/app/src/main/res/values*/styles.xml text eol=lf
+ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json text eol=lf
+ios/Runner/Base.lproj/LaunchScreen.storyboard text eol=lf
+web/index.html text eol=lf
