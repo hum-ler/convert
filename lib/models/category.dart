@@ -52,9 +52,6 @@ enum Category {
 
       case Category.currency:
         return ExchangeRates.currencies;
-
-      default:
-        throw UnimplementedError();
     }
   }
 
@@ -84,9 +81,6 @@ enum Category {
 
       case Category.currency:
         return ExchangeRates.baseCurrency;
-
-      default:
-        throw UnimplementedError();
     }
   }
 
@@ -116,9 +110,6 @@ enum Category {
 
       case Category.currency:
         return ExchangeRates.fromCode(code);
-
-      default:
-        throw UnimplementedError();
     }
   }
 
@@ -148,9 +139,6 @@ enum Category {
 
       case Category.currency:
         return ExchangeRates.tryFromCode(code);
-
-      default:
-        throw UnimplementedError();
     }
   }
 }

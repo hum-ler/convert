@@ -58,9 +58,6 @@ class CategoryDisplay extends StatelessWidget {
 
       case Category.currency:
         return const CurrencyDisplay();
-
-      default:
-        return const Placeholder();
     }
   }
 }
