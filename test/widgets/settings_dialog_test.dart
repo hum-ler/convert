@@ -1,6 +1,7 @@
 import 'package:convert_unit/controllers/controller.dart';
 import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/services/persistence_service.dart';
+import 'package:convert_unit/utilities/utilities.dart';
 import 'package:convert_unit/widgets/color_settings.dart';
 import 'package:convert_unit/widgets/settings_dialog.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +36,10 @@ void main() {
     );
     expect(selection, findsOneWidget);
     expect(
-      (tester.widget(selection) as ColorSelection).color.value,
-      isNot(Colors.indigo.value),
+      (tester.widget(selection) as ColorSelection)
+          .color
+          .isSameColorAs(Colors.indigo),
+      isFalse,
     );
 
     final indigo = ColorSelectionFinder(Colors.indigo);
@@ -46,8 +49,10 @@ void main() {
 
     expect(selection, findsOneWidget);
     expect(
-      (tester.widget(selection) as ColorSelection).color.value,
-      Colors.indigo.value,
+      (tester.widget(selection) as ColorSelection)
+          .color
+          .isSameColorAs(Colors.indigo),
+      isTrue,
     );
   });
 }
@@ -65,6 +70,6 @@ class ColorSelectionFinder extends MatchFinder {
     if (candidate.widget is! ColorSelection) return false;
 
     final selection = candidate.widget as ColorSelection;
-    return selection.color.value == color.value;
+    return selection.color.isSameColorAs(color);
   }
 }

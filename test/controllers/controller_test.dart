@@ -363,10 +363,10 @@ void main() {
       persistenceService: persistenceService,
     );
 
-    expect(state.colorSchemeSeed.value, isNot(Colors.black.value));
+    expect(state.colorSchemeSeed.isSameColorAs(Colors.black), isFalse);
 
     controller.setColorSchemeSeed(Colors.black);
-    expect(state.colorSchemeSeed.value, Colors.black.value);
+    expect(state.colorSchemeSeed.isSameColorAs(Colors.black), isTrue);
     verify(persistenceService.storeColorSchemeSeed(Colors.black));
   });
 

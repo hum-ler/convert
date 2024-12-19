@@ -220,3 +220,17 @@ void showSnackBarMessage(BuildContext context, String message) {
     );
   }
 }
+
+extension ColorComparison on Color {
+  /// Compares a Color with another Color to see if they are reasonably the same.
+  ///
+  /// Colors will be soon be entirely represented as floating points internally.
+  bool isSameColorAs(Color other) {
+    final epsilon = 0.001;
+
+    return (a - other.a).abs() < epsilon &&
+        (r - other.r).abs() < epsilon &&
+        (g - other.g).abs() < epsilon &&
+        (b - other.b).abs() < epsilon;
+  }
+}

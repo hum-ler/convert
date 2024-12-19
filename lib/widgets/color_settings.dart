@@ -1,5 +1,6 @@
 import 'package:convert_unit/controllers/controller.dart';
 import 'package:convert_unit/models/app_state.dart';
+import 'package:convert_unit/utilities/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +20,8 @@ class ColorSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorValue = context.select((AppState state) {
-      return state.colorSchemeSeed.value;
+    final colorSchemeSeed = context.select((AppState state) {
+      return state.colorSchemeSeed;
     });
 
     return Row(
@@ -29,7 +30,7 @@ class ColorSettings extends StatelessWidget {
         (color) {
           return ColorSelection(
             color: color,
-            isSelected: color.value == colorValue,
+            isSelected: color.isSameColorAs(colorSchemeSeed),
           );
         },
       ).toList(),

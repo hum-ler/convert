@@ -74,8 +74,22 @@ class PersistenceService {
     final sharedPreferences = _sharedPreferences;
     if (sharedPreferences == null) return null;
 
-    final colorSchemeSeed = sharedPreferences.getInt('color-scheme-seed');
-    if (colorSchemeSeed != null) return Color(colorSchemeSeed);
+    final colorSchemeSeedA = sharedPreferences.getDouble('color-scheme-seed-a');
+    final colorSchemeSeedR = sharedPreferences.getDouble('color-scheme-seed-r');
+    final colorSchemeSeedG = sharedPreferences.getDouble('color-scheme-seed-g');
+    final colorSchemeSeedB = sharedPreferences.getDouble('color-scheme-seed-b');
+
+    if (colorSchemeSeedA != null &&
+        colorSchemeSeedR != null &&
+        colorSchemeSeedG != null &&
+        colorSchemeSeedB != null) {
+      return Color.from(
+        alpha: colorSchemeSeedA,
+        red: colorSchemeSeedR,
+        green: colorSchemeSeedG,
+        blue: colorSchemeSeedB,
+      );
+    }
 
     return null;
   }
@@ -85,7 +99,10 @@ class PersistenceService {
     final sharedPreferences = _sharedPreferences;
     if (sharedPreferences == null) return;
 
-    await sharedPreferences.setInt('color-scheme-seed', color.value);
+    await sharedPreferences.setDouble('color-scheme-seed-a', color.a);
+    await sharedPreferences.setDouble('color-scheme-seed-r', color.r);
+    await sharedPreferences.setDouble('color-scheme-seed-g', color.g);
+    await sharedPreferences.setDouble('color-scheme-seed-b', color.b);
   }
 
   /// Retrieve the theme mode.
