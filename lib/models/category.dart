@@ -10,6 +10,9 @@ import 'package:convert_unit/models/unit.dart';
 import 'package:flutter/material.dart';
 
 /// A [Category] / quantity of measurement.
+///
+/// If a category has to be altered / retired, keep in mind that the index is
+/// used to saved state on user device.
 enum Category {
   time(icon: Icons.access_time, label: 'Time / Duration'),
   length(icon: Icons.straighten, label: 'Length / Distance'),

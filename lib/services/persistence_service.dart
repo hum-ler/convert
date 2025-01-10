@@ -6,63 +6,50 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for persisting app settings and state.
 class PersistenceService {
-  /// The SharedPreference for getting / setting values.
-  ///
-  /// Make sure to check for null before using.
-  late SharedPreferences? _sharedPreferences;
+  PersistenceService({SharedPreferencesAsync? sharedPreferences})
+      : _sharedPreferences = sharedPreferences ?? SharedPreferencesAsync();
 
-  PersistenceService({SharedPreferences? sharedPreferences})
-      : _sharedPreferences = sharedPreferences;
-
-  /// Initializes the [SharedPreferences].
-  Future<void> init() async {
-    _sharedPreferences = await SharedPreferences.getInstance();
-  }
+  /// The [SharedPreferenceAsync] for getting / setting values.
+  final SharedPreferencesAsync _sharedPreferences;
 
   /// Clears any saved state.
   Future<void> clear() async {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return;
-
-    await sharedPreferences.clear();
+    await _sharedPreferences.clear();
   }
 
   /// Retrieves the full saved state.
   ///
   /// If a key has not been stored previously, its value will keep the
-  /// initialized value from AppState.
-  AppState retrieveState() {
+  /// initialized value from [AppState].
+  Future<AppState> retrieveState() async {
     final state = AppState();
 
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return state;
-
-    final colorSchemeSeed = retrieveColorSchemeSeed();
+    final colorSchemeSeed = await retrieveColorSchemeSeed();
     if (colorSchemeSeed != null) state.colorSchemeSeed = colorSchemeSeed;
 
-    final themeMode = retrieveThemeMode();
+    final themeMode = await retrieveThemeMode();
     if (themeMode != null) state.themeMode = themeMode;
 
-    final category = retrieveCategory();
+    final category = await retrieveCategory();
     if (category != null) state.category = category;
 
-    final insertGroupSeparators = retrieveInsertGroupSeparators();
+    final insertGroupSeparators = await retrieveInsertGroupSeparators();
     if (insertGroupSeparators != null) {
       state.insertGroupSeparators = insertGroupSeparators;
     }
 
     for (final category in Category.values) {
-      final units = retrieveUnits(category);
+      final units = await retrieveUnits(category);
       if (units != null) {
         state.loadCategoryUnits(category, units);
 
         if (category == state.category) state.units = units;
       }
 
-      final bookmark1 = retrieveBookmark(category, 1);
+      final bookmark1 = await retrieveBookmark(category, 1);
       if (bookmark1 != null) state.loadCategoryBookmark1(category, bookmark1);
 
-      final bookmark2 = retrieveBookmark(category, 2);
+      final bookmark2 = await retrieveBookmark(category, 2);
       if (bookmark2 != null) state.loadCategoryBookmark2(category, bookmark2);
     }
 
@@ -70,14 +57,15 @@ class PersistenceService {
   }
 
   /// Retrieves the color scheme seed.
-  Color? retrieveColorSchemeSeed() {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return null;
-
-    final colorSchemeSeedA = sharedPreferences.getDouble('color-scheme-seed-a');
-    final colorSchemeSeedR = sharedPreferences.getDouble('color-scheme-seed-r');
-    final colorSchemeSeedG = sharedPreferences.getDouble('color-scheme-seed-g');
-    final colorSchemeSeedB = sharedPreferences.getDouble('color-scheme-seed-b');
+  Future<Color?> retrieveColorSchemeSeed() async {
+    final colorSchemeSeedA =
+        await _sharedPreferences.getDouble('color-scheme-seed-a');
+    final colorSchemeSeedR =
+        await _sharedPreferences.getDouble('color-scheme-seed-r');
+    final colorSchemeSeedG =
+        await _sharedPreferences.getDouble('color-scheme-seed-g');
+    final colorSchemeSeedB =
+        await _sharedPreferences.getDouble('color-scheme-seed-b');
 
     if (colorSchemeSeedA != null &&
         colorSchemeSeedR != null &&
@@ -96,22 +84,15 @@ class PersistenceService {
 
   /// Stores the color scheme seed.
   Future<void> storeColorSchemeSeed(Color color) async {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return;
-
-    await sharedPreferences.setDouble('color-scheme-seed-a', color.a);
-    await sharedPreferences.setDouble('color-scheme-seed-r', color.r);
-    await sharedPreferences.setDouble('color-scheme-seed-g', color.g);
-    await sharedPreferences.setDouble('color-scheme-seed-b', color.b);
+    await _sharedPreferences.setDouble('color-scheme-seed-a', color.a);
+    await _sharedPreferences.setDouble('color-scheme-seed-r', color.r);
+    await _sharedPreferences.setDouble('color-scheme-seed-g', color.g);
+    await _sharedPreferences.setDouble('color-scheme-seed-b', color.b);
   }
 
   /// Retrieve the theme mode.
-  ThemeMode? retrieveThemeMode() {
-    // FIXME: enum index may change.
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return null;
-
-    final themeMode = sharedPreferences.getInt('theme-mode');
+  Future<ThemeMode?> retrieveThemeMode() async {
+    final themeMode = await _sharedPreferences.getInt('theme-mode');
     if (themeMode != null) return ThemeMode.values[themeMode];
 
     return null;
@@ -119,19 +100,12 @@ class PersistenceService {
 
   /// Stores the theme mode.
   Future<void> storeThemeMode(ThemeMode mode) async {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return;
-
-    await sharedPreferences.setInt('theme-mode', mode.index);
+    await _sharedPreferences.setInt('theme-mode', mode.index);
   }
 
   /// Retrieves the current category.
-  Category? retrieveCategory() {
-    // FIXME: enum index may change.
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return null;
-
-    final category = sharedPreferences.getInt('category');
+  Future<Category?> retrieveCategory() async {
+    final category = await _sharedPreferences.getInt('category');
     if (category != null) return Category.values[category];
 
     return null;
@@ -139,40 +113,28 @@ class PersistenceService {
 
   /// Stores the current category.
   Future<void> storeCategory(Category category) async {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return;
-
-    await sharedPreferences.setInt('category', category.index);
+    await _sharedPreferences.setInt('category', category.index);
   }
 
   /// Retrieves the insert group separators option.
-  bool? retrieveInsertGroupSeparators() {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return null;
-
-    return sharedPreferences.getBool('insert-group-separators');
+  Future<bool?> retrieveInsertGroupSeparators() async {
+    return _sharedPreferences.getBool('insert-group-separators');
   }
 
   /// Stores the insert group separators option.
   Future<void> storeInsertGroupSeparators(bool shouldInsert) async {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return;
-
-    await sharedPreferences.setBool('insert-group-separators', shouldInsert);
+    await _sharedPreferences.setBool('insert-group-separators', shouldInsert);
   }
 
   /// Retrieves the current input / output unit pair.
-  UnitPair? retrieveUnits(Category category) {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return null;
-
+  Future<UnitPair?> retrieveUnits(Category category) async {
     final prefix = category.name;
     final inputUnitKey = '$prefix-input-unit';
     final outputUnitKey = '$prefix-output-unit';
 
-    final inputUnitCode = sharedPreferences.getString(inputUnitKey);
+    final inputUnitCode = await _sharedPreferences.getString(inputUnitKey);
     if (inputUnitCode == null) return null;
-    final outputUnitCode = sharedPreferences.getString(outputUnitKey);
+    final outputUnitCode = await _sharedPreferences.getString(outputUnitKey);
     if (outputUnitCode == null) return null;
 
     final inputUnit = category.tryFromCode(inputUnitCode);
@@ -185,29 +147,24 @@ class PersistenceService {
 
   /// Stores the current input / output unit pair.
   Future<void> storeUnits(Category category, UnitPair units) async {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return;
-
     final prefix = category.name;
     final inputUnitKey = '$prefix-input-unit';
     final outputUnitKey = '$prefix-output-unit';
 
-    await sharedPreferences.setString(inputUnitKey, units.inputUnit.code);
-    await sharedPreferences.setString(outputUnitKey, units.outputUnit.code);
+    await _sharedPreferences.setString(inputUnitKey, units.inputUnit.code);
+    await _sharedPreferences.setString(outputUnitKey, units.outputUnit.code);
   }
 
   /// Retrieves the current bookmark.
-  Bookmark? retrieveBookmark(Category category, int bookmarkNumber) {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return null;
-
+  Future<Bookmark?> retrieveBookmark(
+      Category category, int bookmarkNumber) async {
     final prefix = 'bookmark-$bookmarkNumber-${category.name}';
     final inputUnitKey = '$prefix-input-unit';
     final outputUnitKey = '$prefix-output-unit';
 
-    final inputUnitCode = sharedPreferences.getString(inputUnitKey);
+    final inputUnitCode = await _sharedPreferences.getString(inputUnitKey);
     if (inputUnitCode == null) return null;
-    final outputUnitCode = sharedPreferences.getString(outputUnitKey);
+    final outputUnitCode = await _sharedPreferences.getString(outputUnitKey);
     if (outputUnitCode == null) return null;
 
     final inputUnit = category.tryFromCode(inputUnitCode);
@@ -224,14 +181,11 @@ class PersistenceService {
     int bookmarkNumber,
     Bookmark bookmark,
   ) async {
-    final sharedPreferences = _sharedPreferences;
-    if (sharedPreferences == null) return;
-
     final prefix = 'bookmark-$bookmarkNumber-${category.name}';
     final inputUnitKey = '$prefix-input-unit';
     final outputUnitKey = '$prefix-output-unit';
 
-    await sharedPreferences.setString(inputUnitKey, bookmark.inputUnit.code);
-    await sharedPreferences.setString(outputUnitKey, bookmark.outputUnit.code);
+    await _sharedPreferences.setString(inputUnitKey, bookmark.inputUnit.code);
+    await _sharedPreferences.setString(outputUnitKey, bookmark.outputUnit.code);
   }
 }

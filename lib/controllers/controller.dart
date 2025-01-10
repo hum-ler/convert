@@ -12,10 +12,10 @@ class Controller {
   /// The maximum number of [int] that can be stored in the input buffer.
   static const _inputBufferSize = 12;
 
-  /// The int representation of period character (.).
+  /// The [int] representation of period character (.).
   static const _codeUnitPeriod = 46;
 
-  /// The int representation of zero character (0).
+  /// The [int] representation of zero character (0).
   ///
   /// The int values of other digits can be derived by adding the digit to the
   /// base 0 value. E.g. the code unit of 8 is 48 + 8.

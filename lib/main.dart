@@ -104,8 +104,7 @@ Future<AppState> initMyApp({
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await persistenceService.init();
-  final state = persistenceService.retrieveState();
+  final state = await persistenceService.retrieveState();
 
   // Set up locale-specific currency format.
   await findSystemLocale();
