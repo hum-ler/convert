@@ -32,16 +32,14 @@ void main() {
     state.category = Category.currency;
 
     expect(Category.currency.baseUnit, Category.currency.fromCode('SGD'));
-    expect(state.inputUnit, Category.currency.fromCode('SGD'));
-    expect(state.outputUnit, Category.currency.fromCode('SGD'));
+    expect(state.inputUnit, Category.currency.defaultUnits.inputUnit);
+    expect(state.outputUnit, Category.currency.defaultUnits.outputUnit);
   });
 
   test('Validate bookmarks', () {
     final state = AppState();
 
     state.category = Category.currency;
-
-    final baseUnit = Category.currency.baseUnit;
 
     final aud = Category.currency.fromCode('AUD');
     final eur = Category.currency.fromCode('EUR');
@@ -50,8 +48,9 @@ void main() {
     expect(state.bookmark1.inputUnit, aud);
     expect(state.bookmark1.outputUnit, eur);
 
-    expect(state.bookmark2.inputUnit, baseUnit);
-    expect(state.bookmark2.outputUnit, baseUnit);
+    expect(state.bookmark2.inputUnit, Category.currency.defaultUnits.inputUnit);
+    expect(
+        state.bookmark2.outputUnit, Category.currency.defaultUnits.outputUnit);
 
     final usd = Category.currency.fromCode('USD');
     final myr = Category.currency.fromCode('MYR');

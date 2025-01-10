@@ -33,6 +33,6 @@ void main() {
     await tester.tap(find.text('7'));
     await tester.pump();
 
-    expect(find.text(r'$357'), findsNWidgets(2));
+    expect(find.text(r'$357'), findsNWidgets(1));
   });
 }

@@ -1,5 +1,6 @@
 import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/simple_unit.dart';
+import 'package:convert_unit/models/unit.dart';
 
 /// The collection of mass [SimpleUnit]s.
 class WeightUnits {
@@ -73,6 +74,9 @@ class WeightUnits {
   static final _baseUnit = fromCode('kg');
 
   static SimpleUnit get baseUnit => _baseUnit;
+
+  static UnitPair get defaultUnits =>
+      (inputUnit: fromCode('lb'), outputUnit: _baseUnit);
 
   static SimpleUnit fromCode(String code) {
     return units.firstWhere((unit) => unit.code == code);

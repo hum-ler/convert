@@ -1,4 +1,5 @@
 import 'package:convert_unit/models/currency.dart';
+import 'package:convert_unit/models/unit.dart';
 
 /// The collection of [Currency] information.
 class ExchangeRates {
@@ -82,6 +83,9 @@ class ExchangeRates {
   static final _baseCurrency = fromCode('SGD');
 
   static Currency get baseCurrency => _baseCurrency;
+
+  static UnitPair get defaultCurrencies =>
+      (inputUnit: fromCode('USD'), outputUnit: _baseCurrency);
 
   static final _lastUpdated = DateTime(2024, 8, 5);
 

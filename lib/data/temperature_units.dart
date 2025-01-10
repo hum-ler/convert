@@ -1,4 +1,5 @@
 import 'package:convert_unit/models/temperature.dart';
+import 'package:convert_unit/models/unit.dart';
 import 'package:decimal/decimal.dart';
 
 /// The collection of [Temperature] units.
@@ -30,6 +31,9 @@ class TemperatureUnits {
   ];
 
   static Temperature get baseUnit => units.first;
+
+  static UnitPair get defaultUnits =>
+      (inputUnit: units.last, outputUnit: units.first);
 
   static Temperature fromCode(String code) {
     return units.firstWhere((unit) => unit.code == code);

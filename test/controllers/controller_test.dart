@@ -160,7 +160,7 @@ void main() {
 
     state.category = Category.currency;
 
-    expect(state.inputUnit, Category.currency.baseUnit);
+    expect(state.inputUnit, Category.currency.defaultUnits.inputUnit);
 
     final aud = Category.currency.fromCode('AUD');
     controller.setInputUnit(aud);
@@ -168,7 +168,7 @@ void main() {
     verify(
       persistenceService.storeUnits(
         Category.currency,
-        (inputUnit: aud, outputUnit: Category.currency.baseUnit),
+        (inputUnit: aud, outputUnit: Category.currency.defaultUnits.outputUnit),
       ),
     );
   });
@@ -183,7 +183,7 @@ void main() {
 
     state.category = Category.currency;
 
-    expect(state.outputUnit, Category.currency.baseUnit);
+    expect(state.outputUnit, Category.currency.defaultUnits.outputUnit);
 
     final eur = Category.currency.fromCode('EUR');
     controller.setOutputUnit(eur);
@@ -191,7 +191,7 @@ void main() {
     verify(
       persistenceService.storeUnits(
         Category.currency,
-        (inputUnit: Category.currency.baseUnit, outputUnit: eur),
+        (inputUnit: Category.currency.defaultUnits.inputUnit, outputUnit: eur),
       ),
     );
   });
@@ -206,8 +206,9 @@ void main() {
 
     state.category = Category.currency;
 
-    expect(state.bookmark1.inputUnit, Category.currency.baseUnit);
-    expect(state.bookmark1.outputUnit, Category.currency.baseUnit);
+    expect(state.bookmark1.inputUnit, Category.currency.defaultUnits.inputUnit);
+    expect(
+        state.bookmark1.outputUnit, Category.currency.defaultUnits.outputUnit);
 
     final aud = Category.currency.fromCode('AUD');
     final eur = Category.currency.fromCode('EUR');
@@ -224,8 +225,9 @@ void main() {
       ),
     );
 
-    expect(state.bookmark2.inputUnit, Category.currency.baseUnit);
-    expect(state.bookmark2.outputUnit, Category.currency.baseUnit);
+    expect(state.bookmark2.inputUnit, Category.currency.defaultUnits.inputUnit);
+    expect(
+        state.bookmark2.outputUnit, Category.currency.defaultUnits.outputUnit);
 
     final usd = Category.currency.fromCode('USD');
     final myr = Category.currency.fromCode('MYR');
@@ -251,8 +253,8 @@ void main() {
       persistenceService: persistenceService,
     );
 
-    expect(state.inputUnit, Category.currency.baseUnit);
-    expect(state.outputUnit, Category.currency.baseUnit);
+    expect(state.inputUnit, Category.currency.defaultUnits.inputUnit);
+    expect(state.outputUnit, Category.currency.defaultUnits.outputUnit);
 
     final usd = Category.currency.fromCode('USD');
     final myr = Category.currency.fromCode('MYR');
@@ -300,6 +302,9 @@ void main() {
       state: state,
       persistenceService: MockPersistenceService(),
     );
+
+    state.inputUnit = Category.currency.baseUnit;
+    state.outputUnit = Category.currency.baseUnit;
 
     expect(displayInput(state.inputBuffer), '');
     expect(exportInput(state.inputBuffer), '');

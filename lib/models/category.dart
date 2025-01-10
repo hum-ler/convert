@@ -144,4 +144,33 @@ enum Category {
         return ExchangeRates.tryFromCode(code);
     }
   }
+
+  /// Retrieves the default input and output [Unit]s for this [Category].
+  UnitPair get defaultUnits {
+    switch (this) {
+      case Category.time:
+        return TimeUnits.defaultUnits;
+
+      case Category.length:
+        return LengthUnits.defaultUnits;
+
+      case Category.weight:
+        return WeightUnits.defaultUnits;
+
+      case Category.speed:
+        return SpeedUnits.defaultUnits;
+
+      case Category.area:
+        return AreaUnits.defaultUnits;
+
+      case Category.volume:
+        return VolumeUnits.defaultUnits;
+
+      case Category.temperature:
+        return TemperatureUnits.defaultUnits;
+
+      case Category.currency:
+        return ExchangeRates.defaultCurrencies;
+    }
+  }
 }

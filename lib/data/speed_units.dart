@@ -1,5 +1,6 @@
 import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/simple_unit.dart';
+import 'package:convert_unit/models/unit.dart';
 
 /// The collection of speed [SimpleUnit]s.
 class SpeedUnits {
@@ -33,6 +34,9 @@ class SpeedUnits {
   static final _baseUnit = fromCode('m-s');
 
   static SimpleUnit get baseUnit => _baseUnit;
+
+  static UnitPair get defaultUnits =>
+      (inputUnit: fromCode('mph'), outputUnit: fromCode('km-h'));
 
   static SimpleUnit fromCode(String code) {
     return units.firstWhere((unit) => unit.code == code);

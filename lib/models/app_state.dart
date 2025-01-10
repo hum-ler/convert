@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 
 /// The application state.
 class AppState extends ChangeNotifier {
-  // TODO: set reasonable defaults for input and output units, instead of just
-  // using base units for both.
-
   // colorSchemeSeed
 
   var _colorSchemeSeed = Colors.red as Color;
@@ -170,7 +167,8 @@ class AppState extends ChangeNotifier {
   // inputUnits
 
   final _inputUnits = {
-    for (final category in Category.values) category: category.baseUnit
+    for (final category in Category.values)
+      category: category.defaultUnits.inputUnit
   };
 
   Unit get inputUnit => _inputUnits[category]!;
@@ -184,7 +182,8 @@ class AppState extends ChangeNotifier {
   // outputUnits
 
   final _outputUnits = {
-    for (final category in Category.values) category: category.baseUnit
+    for (final category in Category.values)
+      category: category.defaultUnits.outputUnit
   };
 
   Unit get outputUnit => _outputUnits[category]!;
@@ -219,8 +218,7 @@ class AppState extends ChangeNotifier {
   // bookmark1
 
   final _bookmark1s = {
-    for (final category in Category.values)
-      category: (inputUnit: category.baseUnit, outputUnit: category.baseUnit)
+    for (final category in Category.values) category: category.defaultUnits
   };
 
   Bookmark get bookmark1 => _bookmark1s[category]!;
@@ -238,8 +236,7 @@ class AppState extends ChangeNotifier {
   // bookmark2
 
   final _bookmark2s = {
-    for (final category in Category.values)
-      category: (inputUnit: category.baseUnit, outputUnit: category.baseUnit)
+    for (final category in Category.values) category: category.defaultUnits
   };
 
   Bookmark get bookmark2 => _bookmark2s[category]!;

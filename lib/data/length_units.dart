@@ -1,5 +1,6 @@
 import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/simple_unit.dart';
+import 'package:convert_unit/models/unit.dart';
 
 /// The collection of length [SimpleUnit]s.
 class LengthUnits {
@@ -73,6 +74,9 @@ class LengthUnits {
   static final _baseUnit = fromCode('m');
 
   static SimpleUnit get baseUnit => _baseUnit;
+
+  static UnitPair get defaultUnits =>
+      (inputUnit: fromCode('mi'), outputUnit: fromCode('km'));
 
   static SimpleUnit fromCode(String code) {
     return units.firstWhere((unit) => unit.code == code);
