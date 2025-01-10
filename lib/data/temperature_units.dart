@@ -27,13 +27,6 @@ class TemperatureUnits {
             Decimal.fromInt(32);
       },
     ),
-    Temperature(
-      code: 'k',
-      name: 'Kelvin',
-      symbol: 'K',
-      toBaseUnit: (input) => input - Decimal.parse('273.15'),
-      fromBaseUnit: (input) => input + Decimal.parse('273.15'),
-    ),
   ];
 
   static Temperature get baseUnit => units.first;

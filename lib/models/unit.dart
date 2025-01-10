@@ -5,8 +5,6 @@ import 'package:decimal/decimal.dart';
 /// [Category].
 ///
 /// This is used in conjunction with convertUnit() under utilities.
-///
-/// TODO: support validation e.g. Kelvin must not go below absolute zero.
 abstract class Unit {
   /// The ID code of this [Unit].
   ///

@@ -122,8 +122,6 @@ class AppState extends ChangeNotifier {
 
   // inputBuffer
 
-  // TODO: support negative input for temperature.
-
   final _inputBuffers = {
     for (final category in Category.values) category: <int>[]
   };
