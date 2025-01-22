@@ -3,7 +3,7 @@ import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/services/persistence_service.dart';
 import 'package:convert_unit/utilities/utilities.dart';
 import 'package:convert_unit/widgets/color_settings.dart';
-import 'package:convert_unit/widgets/settings_dialog.dart';
+import 'package:convert_unit/widgets/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +30,7 @@ void main() {
             ),
             ChangeNotifierProvider.value(value: state),
           ],
-          child: const SettingsDialog(),
+          child: const SettingsPage(),
         ),
       ),
     );

@@ -2,7 +2,6 @@ import 'package:convert_unit/controllers/controller.dart';
 import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/widgets/circular_button.dart';
 import 'package:convert_unit/widgets/keypad.dart';
-import 'package:convert_unit/widgets/settings_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -158,8 +157,7 @@ void main() {
       verify(mockController.deleteLastInput());
 
       await tester.tap(find.byIcon(Icons.settings));
-      await tester.pumpAndSettle();
-      expect(find.byType(SettingsDialog), findsOneWidget);
+      verify(mockController.openSettingsPage(any));
     },
   );
 }

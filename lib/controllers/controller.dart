@@ -3,9 +3,11 @@ import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/unit.dart';
 import 'package:convert_unit/services/persistence_service.dart';
 import 'package:convert_unit/utilities/utilities.dart';
+import 'package:convert_unit/widgets/settings_page.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 /// The controller that mutates [AppState].
 class Controller {
@@ -232,4 +234,20 @@ class Controller {
 
   // TODO: update exchange rates.
   void updateExchangeRates() {}
+
+  void openSettingsPage(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [
+            Provider.value(value: context.read<Controller>()),
+            ChangeNotifierProvider.value(
+              value: context.read<AppState>(),
+            ),
+          ],
+          child: const SettingsPage(),
+        ),
+      ),
+    );
+  }
 }

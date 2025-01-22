@@ -1,7 +1,5 @@
 import 'package:convert_unit/controllers/controller.dart';
-import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/widgets/circular_button.dart';
-import 'package:convert_unit/widgets/settings_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -162,20 +160,8 @@ class Keypad extends StatelessWidget {
           ),
           CircularButton(
             label: 'Settings',
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => MultiProvider(
-                  providers: [
-                    Provider.value(value: context.read<Controller>()),
-                    ChangeNotifierProvider.value(
-                      value: context.read<AppState>(),
-                    ),
-                  ],
-                  child: const SettingsDialog(),
-                ),
-              );
-            },
+            onPressed: () =>
+                context.read<Controller>().openSettingsPage(context),
             useSecondaryColor: true,
             child: const Icon(Icons.settings, size: 32.0),
           ),

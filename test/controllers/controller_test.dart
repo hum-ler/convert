@@ -389,4 +389,8 @@ void main() {
     expect(state.themeMode, ThemeMode.dark);
     verify(persistenceService.storeThemeMode(ThemeMode.dark));
   });
+
+  test('Check openSettingsPage()', () {
+    // TODO
+  }, skip: true);
 }
