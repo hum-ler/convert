@@ -1,3 +1,4 @@
+import 'package:convert_unit/models/currency.dart';
 import 'package:convert_unit/models/unit.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -219,6 +220,30 @@ void showSnackBarMessage(BuildContext context, String message) {
       SnackBar(content: Text(message)),
     );
   }
+}
+
+/// Converts a list of [Currency]s to a serializable string.
+String serializeCurrencies(List<Currency> currencies) {
+  return '[${currencies.map((currency) => Currency.toJson(currency)).join(',')}]';
+}
+
+/// Converts a serializable string to a list of [Currency]s.
+List<Currency>? deserializeCurrencies(String json) {
+  if (!json.startsWith('[{') || !json.endsWith('}]')) {
+    return null;
+  }
+
+  final currencies = List<Currency>.empty(growable: true);
+
+  json.substring(2, json.length - 2).split('},{').forEach((partialJson) {
+    final currency = Currency.fromJson('{$partialJson}');
+
+    if (currency != null) {
+      currencies.add(currency);
+    }
+  });
+
+  return currencies;
 }
 
 extension ColorComparison on Color {

@@ -1,5 +1,6 @@
 import 'package:convert_unit/controllers/controller.dart';
 import 'package:convert_unit/models/app_state.dart';
+import 'package:convert_unit/services/exchange_rates_update_service.dart';
 import 'package:convert_unit/services/persistence_service.dart';
 import 'package:convert_unit/utilities/utilities.dart';
 import 'package:convert_unit/widgets/color_settings.dart';
@@ -26,6 +27,7 @@ void main() {
               create: (_) => Controller(
                 state: state,
                 persistenceService: PersistenceService(),
+                exchangeRatesUpdateService: ExchangeRatesUpdateService(),
               ),
             ),
             ChangeNotifierProvider.value(value: state),

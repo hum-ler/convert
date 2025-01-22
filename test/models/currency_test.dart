@@ -1,6 +1,5 @@
 import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/currency.dart';
-import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -62,38 +61,42 @@ void main() {
     expect(sorted[2], usd);
   });
 
-  test('Currency patching', () {
-    final c = Currency(
-      code: 'C',
-      symbol: '',
-      name: '',
-      exchangeRate: '1',
-      precision: 0,
-      regionEmoji: '',
-    );
-
-    expect(c.code, 'C');
-    expect(c.symbol, isEmpty);
-    expect(c.name, isEmpty);
-    expect(c.exchangeRate, Decimal.fromInt(1));
-    expect(c.precision, isZero);
-    expect(c.regionEmoji, isEmpty);
-
-    c.patch(
+  test('Currency toJson', () {
+    final currency = Currency(
+      code: 'USD',
       symbol: r'$',
-      name: 'check',
-      exchangeRate: '2.3',
+      name: 'United States Dollar',
+      exchangeRate: '1.2345678',
       precision: 2,
-      regionEmoji: '🌏',
+      regionEmoji: '🇺🇸',
     );
-    expect(c.code, 'C');
-    expect(c.symbol, r'$');
-    expect(c.name, 'check');
-    expect(c.exchangeRate, Decimal.parse('2.3'));
-    expect(c.precision, 2);
-    expect(c.regionEmoji, '🌏');
+    final json =
+        r'{"code":"USD","symbol":"$","name":"United States Dollar","exchange-rate":"1.2345678","precision":2,"region-emoji":"🇺🇸"}';
 
-    c.patch(exchangeRate: 'check');
-    expect(c.exchangeRate, Decimal.parse('2.3'));
+    expect(Currency.toJson(currency), json);
+  });
+
+  test('Currency fromJson', () {
+    final currency = Currency(
+      code: 'USD',
+      symbol: r'$',
+      name: 'United States Dollar',
+      exchangeRate: '1.2345678',
+      precision: 2,
+      regionEmoji: '🇺🇸',
+    );
+    final json =
+        r'{"code":"USD","symbol":"$","name":"United States Dollar","exchange-rate":"1.2345678","precision":2,"region-emoji":"🇺🇸"}';
+
+    final parsedCurrency = Currency.fromJson(json);
+    expect(parsedCurrency, isNotNull);
+    expect(parsedCurrency?.compareTo(currency), isZero);
+
+    expect(parsedCurrency?.code, currency.code);
+    expect(parsedCurrency?.symbol, currency.symbol);
+    expect(parsedCurrency?.name, currency.name);
+    expect(parsedCurrency?.exchangeRate, currency.exchangeRate);
+    expect(parsedCurrency?.precision, currency.precision);
+    expect(parsedCurrency?.regionEmoji, currency.regionEmoji);
   });
 }

@@ -12,7 +12,13 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Settings"),
+        title: const Row(
+          children: [
+            Text('Settings'),
+            SizedBox(width: 4.0),
+            Icon(Icons.settings),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0),

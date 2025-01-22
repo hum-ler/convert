@@ -1,4 +1,5 @@
 import 'package:convert_unit/models/category.dart';
+import 'package:convert_unit/models/currency.dart';
 import 'package:convert_unit/models/unit.dart';
 import 'package:convert_unit/utilities/utilities.dart';
 import 'package:decimal/decimal.dart';
@@ -101,5 +102,58 @@ void main() {
     expect(insertIntegerGroupSeparators('12', ','), '12');
 
     expect(insertFractionGroupSeparators('', ','), '');
+  });
+
+  test('Check serializeCurrencies()', () {
+    final sgd = Currency(
+        code: 'SGD',
+        symbol: r'$',
+        name: 'Singapore Dollar',
+        exchangeRate: '1',
+        precision: 2,
+        regionEmoji: '🇸🇬');
+    final usd = Currency(
+      code: 'USD',
+      symbol: r'$',
+      name: 'United States Dollar',
+      exchangeRate: '1.2345678',
+      precision: 2,
+      regionEmoji: '🇺🇸',
+    );
+    final currencies = [sgd, usd];
+    final json =
+        r'[{"code":"SGD","symbol":"$","name":"Singapore Dollar","exchange-rate":"1","precision":2,"region-emoji":"🇸🇬"},{"code":"USD","symbol":"$","name":"United States Dollar","exchange-rate":"1.2345678","precision":2,"region-emoji":"🇺🇸"}]';
+
+    expect(serializeCurrencies(currencies), json);
+  });
+
+  test('Check deserializeCurrencies()', () {
+    final sgd = Currency(
+        code: 'SGD',
+        symbol: r'$',
+        name: 'Singapore Dollar',
+        exchangeRate: '1',
+        precision: 2,
+        regionEmoji: '🇸🇬');
+    final usd = Currency(
+      code: 'USD',
+      symbol: r'$',
+      name: 'United States Dollar',
+      exchangeRate: '1.2345678',
+      precision: 2,
+      regionEmoji: '🇺🇸',
+    );
+    final currencies = [sgd, usd];
+    final json =
+        r'[{"code":"SGD","symbol":"$","name":"Singapore Dollar","exchange-rate":"1","precision":2,"region-emoji":"🇸🇬"},{"code":"USD","symbol":"$","name":"United States Dollar","exchange-rate":"1.2345678","precision":2,"region-emoji":"🇺🇸"}]';
+
+    final parsedCurrencies = deserializeCurrencies(json);
+
+    expect(parsedCurrencies, isNotNull);
+    expect(parsedCurrencies, isNotEmpty);
+    expect(parsedCurrencies?.length, equals(2));
+
+    expect(parsedCurrencies?.first.compareTo(currencies.first), isZero);
+    expect(parsedCurrencies?.last.compareTo(currencies.last), isZero);
   });
 }

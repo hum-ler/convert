@@ -49,3 +49,6 @@ app.*.map.json
 
 # Affinity app locks
 *.afdesign~lock~
+
+# Environment variables
+.env

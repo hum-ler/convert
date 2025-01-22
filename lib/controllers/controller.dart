@@ -1,9 +1,12 @@
+import 'package:convert_unit/data/exchange_rates.dart';
 import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/unit.dart';
+import 'package:convert_unit/services/exchange_rates_update_service.dart';
 import 'package:convert_unit/services/persistence_service.dart';
 import 'package:convert_unit/utilities/utilities.dart';
 import 'package:convert_unit/widgets/settings_page.dart';
+import 'package:convert_unit/widgets/sign_in_page.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,12 +29,16 @@ class Controller {
   Controller({
     required AppState state,
     required PersistenceService persistenceService,
+    required ExchangeRatesUpdateService exchangeRatesUpdateService,
   })  : _state = state,
-        _persistenceService = persistenceService;
+        _persistenceService = persistenceService,
+        _exchangeRatesUpdateService = exchangeRatesUpdateService;
 
   final AppState _state;
 
   final PersistenceService _persistenceService;
+
+  final ExchangeRatesUpdateService _exchangeRatesUpdateService;
 
   void setCategory(Category? category) {
     if (category != null) {
@@ -232,8 +239,27 @@ class Controller {
     _state.insertGroupSeparators = shouldInsert;
   }
 
-  // TODO: update exchange rates.
-  void updateExchangeRates() {}
+  Future<void> updateExchangeRates(BuildContext? context) async {
+    // If no temporary credentials, or if expired, make the user sign in.
+    if (await _exchangeRatesUpdateService.requiresLogin()) {
+      if (context != null && context.mounted) {
+        _openSignInPage(context);
+      }
+
+      return;
+    }
+
+    // Update currencies using ExchangeRatesUpdateService.
+    await _exchangeRatesUpdateService.updateCurrencies();
+
+    // Persist currencies using PersistenceService.
+    await _persistenceService.storeCurrencies(ExchangeRates.currencies);
+    await _persistenceService
+        .storeCurrenciesLastUpdated(ExchangeRates.lastUpdated);
+
+    // Propagate changes.
+    _state.currenciesLastUpdated = ExchangeRates.lastUpdated;
+  }
 
   void openSettingsPage(BuildContext context) {
     Navigator.of(context).push(
@@ -250,4 +276,28 @@ class Controller {
       ),
     );
   }
+
+  void _openSignInPage(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [
+            Provider.value(value: context.read<Controller>()),
+            ChangeNotifierProvider.value(
+              value: context.read<AppState>(),
+            ),
+          ],
+          child: SignInPage(signInUrl: _exchangeRatesUpdateService.signInUrl),
+        ),
+      ),
+    );
+  }
+
+  Future<void> updateServiceLogin(BuildContext context, String code) async {
+    await _exchangeRatesUpdateService.login(code);
+
+    updateExchangeRates(null);
+  }
+
+  Future<void> updateServiceLogout() => _exchangeRatesUpdateService.logout();
 }

@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "args": [
+                "--dart-define-from-file=.env"
+            ],
+            "name": "convert",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "args": [
+                "--dart-define-from-file=.env"
+            ],
+            "flutterMode": "profile",
+            "name": "convert (profile mode)",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "args": [
+                "--dart-define-from-file=.env"
+            ],
+            "flutterMode": "release",
+            "name": "convert (release mode)",
+            "request": "launch",
+            "type": "dart"
+        }
+    ],
+    "version": "0.2.0"
+}

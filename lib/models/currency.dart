@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/unit.dart';
 import 'package:decimal/decimal.dart';
@@ -20,26 +22,26 @@ class Currency implements Comparable<Currency>, Unit {
   @override
   final String code;
 
-  String _symbol;
+  final String _symbol;
 
   @override
   String get symbol => _symbol;
 
-  String _name;
+  final String _name;
 
   @override
   String get name => _name;
 
-  String _exchangeRate;
+  final String _exchangeRate;
 
   Decimal get exchangeRate => Decimal.parse(_exchangeRate);
 
-  int _precision;
+  final int _precision;
 
   @override
   int get precision => _precision;
 
-  String _regionEmoji;
+  final String _regionEmoji;
 
   String get regionEmoji => _regionEmoji;
 
@@ -54,27 +56,6 @@ class Currency implements Comparable<Currency>, Unit {
     return (value) => value * exchangeRate;
   }
 
-  void patch({
-    String? symbol,
-    String? name,
-    String? exchangeRate,
-    int? precision,
-    String? regionEmoji,
-  }) {
-    if (symbol != null) _symbol = symbol;
-
-    if (name != null) _name = name;
-
-    // Check if exchangeRate can be parsed into a Decimal before setting.
-    if (exchangeRate != null && Decimal.tryParse(exchangeRate) != null) {
-      _exchangeRate = exchangeRate;
-    }
-
-    if (precision != null) _precision = precision;
-
-    if (regionEmoji != null) _regionEmoji = regionEmoji;
-  }
-
   @override
   int compareTo(Currency other) => code.compareTo(other.code);
 
@@ -86,6 +67,33 @@ class Currency implements Comparable<Currency>, Unit {
 
   @override
   Decimal Function(Decimal) get fromBaseUnit => fromBaseCurrency;
+
+  /// Converts a [Currency] to a serializable string.
+  static String toJson(Currency currency) =>
+      '{"code":"${currency.code}","symbol":"${currency.symbol}","name":"${currency.name}","exchange-rate":"${currency.exchangeRate}","precision":${currency.precision},"region-emoji":"${currency.regionEmoji}"}';
+
+  /// Converts a serializable string to a [Currency].
+  static Currency? fromJson(String json) {
+    final parsedCurrency = jsonDecode(json);
+
+    if (parsedCurrency['code'] == null ||
+        parsedCurrency['symbol'] == null ||
+        parsedCurrency['name'] == null ||
+        parsedCurrency['exchange-rate'] == null ||
+        parsedCurrency['precision'] == null ||
+        parsedCurrency['region-emoji'] == null) {
+      return null;
+    }
+
+    return Currency(
+      code: parsedCurrency['code'],
+      symbol: parsedCurrency['symbol'],
+      name: parsedCurrency['name'],
+      exchangeRate: parsedCurrency['exchange-rate'],
+      precision: parsedCurrency['precision'],
+      regionEmoji: parsedCurrency['region-emoji'],
+    );
+  }
 }
 
 enum SymbolPosition {

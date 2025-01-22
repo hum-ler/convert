@@ -1,3 +1,4 @@
+import 'package:convert_unit/data/exchange_rates.dart';
 import 'package:convert_unit/models/category.dart';
 import 'package:convert_unit/models/currency.dart';
 import 'package:convert_unit/models/unit.dart';
@@ -249,5 +250,17 @@ class AppState extends ChangeNotifier {
 
   void loadCategoryBookmark2(Category category, Bookmark bookmark) {
     _bookmark2s[category] = bookmark;
+  }
+
+  // currenciesLastUpdated
+
+  var _currenciesLastUpdated = ExchangeRates.lastUpdated;
+
+  DateTime get currenciesLastUpdated => _currenciesLastUpdated;
+
+  set currenciesLastUpdated(DateTime currenciesLastUpdated) {
+    _currenciesLastUpdated = currenciesLastUpdated;
+
+    notifyListeners();
   }
 }

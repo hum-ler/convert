@@ -1,5 +1,6 @@
 import 'package:convert_unit/main.dart';
 import 'package:convert_unit/models/app_state.dart';
+import 'package:convert_unit/services/exchange_rates_update_service.dart';
 import 'package:convert_unit/services/persistence_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +21,7 @@ void main() {
       MultiProvider(
         providers: [
           Provider(create: (_) => PersistenceService()),
+          Provider(create: (_) => ExchangeRatesUpdateService()),
           ChangeNotifierProvider(create: (_) => AppState()),
         ],
         child: const MyApp(),

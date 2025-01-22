@@ -1,6 +1,8 @@
 import 'package:convert_unit/controllers/controller.dart';
+import 'package:convert_unit/data/exchange_rates.dart';
 import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/models/currency.dart';
+import 'package:convert_unit/services/exchange_rates_update_service.dart';
 import 'package:convert_unit/services/persistence_service.dart';
 import 'package:convert_unit/widgets/category_display.dart';
 import 'package:convert_unit/widgets/category_switcher.dart';
@@ -13,12 +15,14 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   final persistenceService = PersistenceService();
+  final exchangeRatesUpdateService = ExchangeRatesUpdateService();
   final state = await initMyApp(persistenceService: persistenceService);
 
   runApp(
     MultiProvider(
       providers: [
         Provider.value(value: persistenceService),
+        Provider.value(value: exchangeRatesUpdateService),
         ChangeNotifierProvider.value(value: state),
       ],
       child: const MyApp(),
@@ -67,6 +71,7 @@ class MyHomePage extends StatelessWidget {
       create: (_) => Controller(
         state: context.read<AppState>(),
         persistenceService: context.read<PersistenceService>(),
+        exchangeRatesUpdateService: context.read<ExchangeRatesUpdateService>(),
       ),
       child: Scaffold(
         extendBody: true,
@@ -103,6 +108,17 @@ Future<AppState> initMyApp({
 }) async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  final currencies = await persistenceService.retrieveCurrencies();
+  if (currencies != null) {
+    ExchangeRates.currencies = currencies;
+  }
+
+  final currenciesLastUpdated =
+      await persistenceService.retrieveCurrenciesLastUpdated();
+  if (currenciesLastUpdated != null) {
+    ExchangeRates.lastUpdated = currenciesLastUpdated;
+  }
 
   final state = await persistenceService.retrieveState();
 

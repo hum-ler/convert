@@ -1,6 +1,8 @@
 import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/models/category.dart';
+import 'package:convert_unit/models/currency.dart';
 import 'package:convert_unit/models/unit.dart';
+import 'package:convert_unit/utilities/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -51,6 +53,11 @@ class PersistenceService {
 
       final bookmark2 = await retrieveBookmark(category, 2);
       if (bookmark2 != null) state.loadCategoryBookmark2(category, bookmark2);
+
+      final currenciesLastUpdated = await retrieveCurrenciesLastUpdated();
+      if (currenciesLastUpdated != null) {
+        state.currenciesLastUpdated = currenciesLastUpdated;
+      }
     }
 
     return state;
@@ -187,5 +194,37 @@ class PersistenceService {
 
     await _sharedPreferences.setString(inputUnitKey, bookmark.inputUnit.code);
     await _sharedPreferences.setString(outputUnitKey, bookmark.outputUnit.code);
+  }
+
+  /// Retrieves the currencies list.
+  Future<List<Currency>?> retrieveCurrencies() async {
+    final json = await _sharedPreferences.getString('currencies');
+    if (json != null) return deserializeCurrencies(json);
+
+    return null;
+  }
+
+  /// Stores the currencies list.
+  Future<void> storeCurrencies(List<Currency> currencies) async {
+    final json = serializeCurrencies(currencies);
+
+    await _sharedPreferences.setString('currencies', json);
+  }
+
+  /// Retrieves the last updated timestamp of the currencies list.
+  Future<DateTime?> retrieveCurrenciesLastUpdated() async {
+    final lastUpdated =
+        await _sharedPreferences.getInt('currencies-last-updated');
+    if (lastUpdated != null) {
+      return DateTime.fromMicrosecondsSinceEpoch(lastUpdated);
+    }
+
+    return null;
+  }
+
+  /// Stores the last updated timestamp of the currencies list.
+  Future<void> storeCurrenciesLastUpdated(DateTime lastUpdated) async {
+    await _sharedPreferences.setInt(
+        'currencies-last-updated', lastUpdated.microsecondsSinceEpoch);
   }
 }

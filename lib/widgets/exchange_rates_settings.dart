@@ -1,7 +1,9 @@
 import 'package:convert_unit/controllers/controller.dart';
 import 'package:convert_unit/data/exchange_rates.dart';
+import 'package:convert_unit/models/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+// import 'package:webview_flutter/webview_flutter.dart';
 
 /// The settings for exchange rates.
 class ExchangeRatesSettings extends StatelessWidget {
@@ -9,14 +11,15 @@ class ExchangeRatesSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scrollController = ScrollController();
+    final lastUpdated = context.watch<AppState>().currenciesLastUpdated;
 
-    final lastUpdated = ExchangeRates.lastUpdated.toString().split(' ').first;
+    final scrollController = ScrollController();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Exchange rates downloaded on $lastUpdated:'),
+        Text(
+            'Exchange rates downloaded on ${lastUpdated.toString().split(" ").first}:'),
         const SizedBox(height: 12.0),
         SizedBox(
           height: 200.0,
@@ -59,9 +62,10 @@ class ExchangeRatesSettings extends StatelessWidget {
         ),
         const SizedBox(height: 12.0),
         FilledButton(
-          onPressed: () => context.read<Controller>().updateExchangeRates(),
+          onPressed: () =>
+              context.read<Controller>().updateExchangeRates(context),
           child: const Text(
-            'Update exchange rates',
+            'Sign in | Update',
             textScaler: TextScaler.linear(1.2),
           ),
         ),

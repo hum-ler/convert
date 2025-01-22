@@ -31,7 +31,7 @@ class ExchangeRates {
     Currency(
       code: 'GBP',
       symbol: '£',
-      name: 'Pound sterling',
+      name: 'Pound Sterling',
       exchangeRate: '0.58744582',
       precision: 2,
       regionEmoji: '🇬🇧',
@@ -80,16 +80,23 @@ class ExchangeRates {
 
   static List<Currency> get currencies => _currencies;
 
-  static final _baseCurrency = fromCode('SGD');
+  static set currencies(List<Currency> currencies) {
+    _currencies
+      ..clear()
+      ..addAll(currencies..sort((a, b) => a.code.compareTo(b.code)));
+
+    _baseCurrency = fromCode('SGD');
+  }
+
+  static var _baseCurrency = fromCode('SGD');
 
   static Currency get baseCurrency => _baseCurrency;
 
   static UnitPair get defaultCurrencies =>
       (inputUnit: fromCode('USD'), outputUnit: _baseCurrency);
 
-  static final _lastUpdated = DateTime(2024, 8, 5);
-
-  static DateTime get lastUpdated => _lastUpdated;
+  /// The timestamp of the last currencies update.
+  static var lastUpdated = DateTime(2024, 8, 5);
 
   /// Finds the Currency identified by [code] in [currencies].
   ///
@@ -125,33 +132,5 @@ class ExchangeRates {
     final index = _currencies.indexWhere((currency) => currency.code == code);
 
     return index != -1 ? index : null;
-  }
-
-  /// Patches the Currency identified by [code] in [currencies], with
-  /// the provided information.
-  ///
-  /// This is not thread-safe.
-  static void patch(
-    String code, {
-    String? symbol,
-    String? name,
-    String? exchangeRate,
-    int? precision,
-    String? regionEmoji,
-  }) {
-    tryFromCode(code)?.patch(
-      symbol: symbol,
-      name: name,
-      exchangeRate: exchangeRate,
-      precision: precision,
-      regionEmoji: regionEmoji,
-    );
-  }
-
-  /// Retrieves and patches [currencies] with information from UpdateService.
-  ///
-  /// This is not thread-safe.
-  static Future<void> update() async {
-    // TODO: update exchange rates.
   }
 }

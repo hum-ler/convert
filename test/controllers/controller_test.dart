@@ -1,6 +1,7 @@
 import 'package:convert_unit/controllers/controller.dart';
 import 'package:convert_unit/models/app_state.dart';
 import 'package:convert_unit/models/category.dart';
+import 'package:convert_unit/services/exchange_rates_update_service.dart';
 import 'package:convert_unit/services/persistence_service.dart';
 import 'package:convert_unit/utilities/utilities.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-@GenerateNiceMocks([MockSpec<PersistenceService>()])
+@GenerateNiceMocks([
+  MockSpec<PersistenceService>(),
+  MockSpec<ExchangeRatesUpdateService>(),
+])
 import 'controller_test.mocks.dart';
 
 void main() {
@@ -18,6 +22,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: MockPersistenceService(),
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     // Start with an empty display.
@@ -45,6 +50,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: MockPersistenceService(),
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     // Start with an empty display.
@@ -68,6 +74,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: MockPersistenceService(),
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     // Start with an empty display.
@@ -109,6 +116,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: MockPersistenceService(),
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     // 110% of 0 is 0.
@@ -132,6 +140,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: MockPersistenceService(),
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     // 120% of 0 is 0.
@@ -156,6 +165,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: persistenceService,
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     state.category = Category.currency;
@@ -179,6 +189,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: persistenceService,
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     state.category = Category.currency;
@@ -202,6 +213,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: persistenceService,
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     state.category = Category.currency;
@@ -251,6 +263,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: persistenceService,
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     expect(state.inputUnit, Category.currency.defaultUnits.inputUnit);
@@ -301,6 +314,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: MockPersistenceService(),
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     state.inputUnit = Category.currency.baseUnit;
@@ -366,6 +380,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: persistenceService,
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     expect(state.colorSchemeSeed.isSameColorAs(Colors.black), isFalse);
@@ -381,6 +396,7 @@ void main() {
     final controller = Controller(
       state: state,
       persistenceService: persistenceService,
+      exchangeRatesUpdateService: MockExchangeRatesUpdateService(),
     );
 
     expect(state.themeMode, ThemeMode.system);
@@ -390,7 +406,30 @@ void main() {
     verify(persistenceService.storeThemeMode(ThemeMode.dark));
   });
 
-  test('Check openSettingsPage()', () {
-    // TODO
-  }, skip: true);
+  test('Check updateExchangeRates()', () async {
+    final state = AppState();
+    final persistenceService = MockPersistenceService();
+    final exchangeRatesUpdateService = MockExchangeRatesUpdateService();
+    final controller = Controller(
+      state: state,
+      persistenceService: persistenceService,
+      exchangeRatesUpdateService: exchangeRatesUpdateService,
+    );
+
+    when(exchangeRatesUpdateService.requiresLogin())
+        .thenAnswer((_) async => true);
+
+    await controller.updateExchangeRates(null);
+    verify(exchangeRatesUpdateService.requiresLogin());
+    verifyNever(exchangeRatesUpdateService.updateCurrencies());
+
+    reset(exchangeRatesUpdateService);
+
+    when(exchangeRatesUpdateService.requiresLogin())
+        .thenAnswer((_) async => false);
+
+    await controller.updateExchangeRates(null);
+    verify(exchangeRatesUpdateService.requiresLogin());
+    verify(exchangeRatesUpdateService.updateCurrencies());
+  });
 }
