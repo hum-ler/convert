@@ -76,7 +76,7 @@ void main() {
           of: inputCurrencyRow,
           matching: find.text('${sgd.regionEmoji}  ${sgd.code}'),
         ),
-        const Offset(0.0, 80.0),
+        const Offset(0.0, 40.0),
       );
       await tester.pump();
       expect(
@@ -106,7 +106,7 @@ void main() {
           of: outputCurrencyRow,
           matching: find.text('${sgd.regionEmoji}  ${sgd.code}'),
         ),
-        const Offset(0.0, -80.0),
+        const Offset(0.0, -40.0),
       );
       await tester.pump();
       expect(
