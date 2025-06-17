@@ -110,13 +110,13 @@ Future<AppState> initMyApp({
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   final currencies = await persistenceService.retrieveCurrencies();
-  if (currencies != null) {
-    ExchangeRates.currencies = currencies;
-  }
-
+  final baseCurrencyCode = await persistenceService.retrieveBaseCurrencyCode();
   final currenciesLastUpdated =
       await persistenceService.retrieveCurrenciesLastUpdated();
-  if (currenciesLastUpdated != null) {
+  if (baseCurrencyCode != null &&
+      currencies != null &&
+      currenciesLastUpdated != null) {
+    ExchangeRates.updateCurrencies(currencies, baseCurrencyCode);
     ExchangeRates.lastUpdated = currenciesLastUpdated;
   }
 

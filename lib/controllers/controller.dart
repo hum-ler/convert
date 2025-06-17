@@ -255,6 +255,8 @@ class Controller {
     // Persist currencies using PersistenceService.
     await _persistenceService.storeCurrencies(ExchangeRates.currencies);
     await _persistenceService
+        .storeBaseCurrencyCode(ExchangeRates.baseCurrency.code);
+    await _persistenceService
         .storeCurrenciesLastUpdated(ExchangeRates.lastUpdated);
 
     // Propagate changes.

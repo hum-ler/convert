@@ -3,14 +3,53 @@ import 'package:convert_unit/data/exchange_rates.dart';
 import 'package:convert_unit/models/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// import 'package:webview_flutter/webview_flutter.dart';
 
 /// The settings for exchange rates.
-class ExchangeRatesSettings extends StatelessWidget {
+class ExchangeRatesSettings extends StatefulWidget {
   const ExchangeRatesSettings({super.key});
 
   @override
+  State<ExchangeRatesSettings> createState() => _ExchangeRatesSettingsState();
+}
+
+class _ExchangeRatesSettingsState extends State<ExchangeRatesSettings> {
+  late final AppState _state;
+  late DateTime _lastUpdated;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _state = context.read<AppState>();
+    _state.addListener(_reportLastUpdated);
+
+    _lastUpdated = ExchangeRates.lastUpdated;
+  }
+
+  @override
+  void dispose() {
+    _state.removeListener(_reportLastUpdated);
+
+    super.dispose();
+  }
+
+  /// Shows a SnackBar message when the exchange rates are updated.
+  void _reportLastUpdated() {
+    String updateMessage = 'Exchange rates already up-to-date.';
+
+    if (_lastUpdated != ExchangeRates.lastUpdated) {
+      updateMessage =
+          'Exchange rates updated to ${ExchangeRates.lastUpdated.toString().split(" ").first}.';
+      _lastUpdated = ExchangeRates.lastUpdated;
+    }
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(updateMessage)));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Triggers an update when currenciesLastUpdated is changed.
     final lastUpdated = context.watch<AppState>().currenciesLastUpdated;
 
     final scrollController = ScrollController();
@@ -19,7 +58,8 @@ class ExchangeRatesSettings extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-            'Exchange rates downloaded on ${lastUpdated.toString().split(" ").first}:'),
+          'Exchange rates downloaded on ${lastUpdated.toString().split(" ").first}:',
+        ),
         const SizedBox(height: 12.0),
         SizedBox(
           height: 200.0,
@@ -62,8 +102,20 @@ class ExchangeRatesSettings extends StatelessWidget {
         ),
         const SizedBox(height: 12.0),
         FilledButton(
-          onPressed: () =>
-              context.read<Controller>().updateExchangeRates(context),
+          onPressed: () => context
+              .read<Controller>()
+              .updateExchangeRates(context)
+              .catchError((_) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Unable to download latest exchange rates. Please try again later.',
+                  ),
+                ),
+              );
+            }
+          }),
           child: const Text(
             'Sign in | Update',
             textScaler: TextScaler.linear(1.2),

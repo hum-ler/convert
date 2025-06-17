@@ -227,4 +227,14 @@ class PersistenceService {
     await _sharedPreferences.setInt(
         'currencies-last-updated', lastUpdated.microsecondsSinceEpoch);
   }
+
+  /// Retrieves the code of the base currency of the currencies list.
+  Future<String?> retrieveBaseCurrencyCode() async {
+    return _sharedPreferences.getString('base-currency-code');
+  }
+
+  /// Stores the code of the base currency of the currencies list.
+  Future<void> storeBaseCurrencyCode(String baseCurrencyCode) async {
+    await _sharedPreferences.setString('base-currency-code', baseCurrencyCode);
+  }
 }

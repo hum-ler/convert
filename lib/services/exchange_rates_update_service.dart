@@ -107,10 +107,15 @@ class ExchangeRatesUpdateService {
     final payload = await _downloadCurrencies();
     final parsedCurrencies = _parseCurrencies(payload);
 
-    if (parsedCurrencies != null) {
-      ExchangeRates.currencies = parsedCurrencies.currencies;
-      ExchangeRates.lastUpdated = parsedCurrencies.lastUpdated;
+    if (parsedCurrencies == null) {
+      throw Exception('Unable to download or parse currencies.');
     }
+
+    ExchangeRates.updateCurrencies(
+      parsedCurrencies.currencies,
+      parsedCurrencies.baseCurrencyCode,
+    );
+    ExchangeRates.lastUpdated = parsedCurrencies.lastUpdated;
   }
 
   /// Downloads the latest exchange rates from database.
@@ -138,14 +143,18 @@ class ExchangeRatesUpdateService {
     );
   }
 
-  /// Parse downloaded exchange rate data from database.
-  ({List<Currency> currencies, DateTime lastUpdated})? _parseCurrencies(
-      Map<String, dynamic> payload) {
-    if (payload['timestamp'] == null || payload['data'] == null) {
+  /// Parses downloaded exchange rate data from database.
+  ({List<Currency> currencies, String baseCurrencyCode, DateTime lastUpdated})?
+      _parseCurrencies(Map<String, dynamic> payload) {
+    if (payload['timestamp'] == null ||
+        payload['data'] == null ||
+        payload['base-currency'] == null) {
       return null;
     }
 
-    final lastUpdated = DateTime.parse(payload['timestamp']);
+    final lastUpdated = DateTime.parse(payload['timestamp']).toLocal();
+
+    final baseCurrencyCode = payload['base-currency'];
 
     final currencies = List<Currency>.empty(growable: true);
     for (final currency in payload['data']) {
@@ -161,6 +170,10 @@ class ExchangeRatesUpdateService {
       );
     }
 
-    return (currencies: currencies, lastUpdated: lastUpdated);
+    return (
+      currencies: currencies,
+      baseCurrencyCode: baseCurrencyCode,
+      lastUpdated: lastUpdated
+    );
   }
 }

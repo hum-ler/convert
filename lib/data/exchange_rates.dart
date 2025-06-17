@@ -80,14 +80,6 @@ class ExchangeRates {
 
   static List<Currency> get currencies => _currencies;
 
-  static set currencies(List<Currency> currencies) {
-    _currencies
-      ..clear()
-      ..addAll(currencies..sort((a, b) => a.code.compareTo(b.code)));
-
-    _baseCurrency = fromCode('SGD');
-  }
-
   static var _baseCurrency = fromCode('SGD');
 
   static Currency get baseCurrency => _baseCurrency;
@@ -132,5 +124,31 @@ class ExchangeRates {
     final index = _currencies.indexWhere((currency) => currency.code == code);
 
     return index != -1 ? index : null;
+  }
+
+  /// Updates [currencies] with the given replacement. Also updates the
+  /// [baseCurrency].
+  ///
+  /// The provided list must contain at least the Currency with
+  /// [baseCurrencyCode]. If not found, the update will be aborted.
+  static void updateCurrencies(
+    List<Currency> currencies,
+    String baseCurrencyCode,
+  ) {
+    currencies.sort((a, b) => a.code.compareTo(b.code));
+
+    final Currency baseCurrency;
+    try {
+      baseCurrency = currencies
+          .firstWhere((currency) => currency.code == baseCurrencyCode);
+    } on StateError {
+      return;
+    }
+
+    _currencies
+      ..clear()
+      ..addAll(currencies);
+
+    _baseCurrency = baseCurrency;
   }
 }
